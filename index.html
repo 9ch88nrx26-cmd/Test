@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>MostTo — More Stronger Tomorrow</title>
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: #0a0a0d; -webkit-tap-highlight-color: transparent; }
+  .boot {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; color: #4A8FFF;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+    flex-direction: column; gap: 18px;
+  }
+  .boot .spinner {
+    width: 36px; height: 36px; border: 3px solid rgba(74,143,255,.2);
+    border-top-color: #4A8FFF; border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  .boot .tag {
+    font-size: 11px; letter-spacing: 2px; font-weight: 800;
+    color: rgba(74,143,255,.7);
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.3.1",
+    "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+    "framer-motion": "https://esm.sh/framer-motion@11.11.17?deps=react@18.3.1,react-dom@18.3.1",
+    "lucide-react": "https://esm.sh/lucide-react@0.460.0?deps=react@18.3.1"
+  }
+}
+</script>
+</head>
+<body>
+<div id="root">
+  <div class="boot">
+    <div class="spinner"></div>
+    <div class="tag">LOADING MOSTTO</div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"></script>
+<script type="text/babel" data-type="module" data-presets="react">
+import React, { useRef } from 'react';
+import { createRoot } from 'react-dom/client';
+import {
+  motion, useScroll, useTransform, useInView, MotionConfig,
+} from 'framer-motion';
+import {
+  Check, Flame, Trophy, Target, Zap,
+  Award, Apple, Play, Github, Twitter, Instagram,
+  Sparkles, Activity, BarChart3,
+} from 'lucide-react';
+
+const C = {
+  bg: '#0a0a0d', bgAlt: '#111114', card: '#1c1c20',
+  blue: '#4A8FFF', blue2: '#2563eb',
+  orange: '#f97316', gold: '#fbbf24', silver: '#94a3b8', bronze: '#cd7c2f',
+  purple: '#a855f7', green: '#22c55e', cyan: '#22d3ee',
+  text: '#fff', sub: 'rgba(255,255,255,.55)', subDim: 'rgba(255,255,255,.4)',
+  border: 'rgba(255,255,255,.08)',
+};
+const FONT = '-apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif';
+const EASE = [0.2, 0.8, 0.2, 1];
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
+};
+const fadeUpFast = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
+};
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+};
+const staggerSlow = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.05 } },
+};
+const viewport = { once: true, margin: '-80px' };
+
+function MosstoLanding() {
+  return (
+    <MotionConfig transition={{ duration: 0.5, ease: EASE }}>
+      <div style={{
+        background: C.bg, color: C.text, fontFamily: FONT,
+        minHeight: '100vh', overflowX: 'hidden',
+      }}>
+        <Nav />
+        <Hero />
+        <AIDetectionSection />
+        <CameraGuideSection />
+        <RPGSection />
+        <TierShowcaseSection />
+        <SocialSection />
+        <StatsSection />
+        <FinalCTA />
+        <Footer />
+      </div>
+    </MotionConfig>
+  );
+}
+
+function Nav() {
+  const { scrollY } = useScroll();
+  const bgAlpha = useTransform(scrollY, [0, 60], [0, 0.85]);
+  const borderAlpha = useTransform(scrollY, [0, 60], [0, 0.08]);
+  const bgColor = useTransform(bgAlpha, v => `rgba(10,10,13,${v})`);
+  const borderColor = useTransform(borderAlpha, v => `rgba(255,255,255,${v})`);
+  return (
+    <motion.nav
+      initial={{ y: -50, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: EASE }}
+      style={{
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+        padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+      }}
+    >
+      <motion.div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        background: bgColor,
+        borderBottom: '1px solid',
+        borderBottomColor: borderColor,
+      }}/>
+      <div style={{ position: 'relative', fontSize: 20, fontWeight: 900, letterSpacing: '-0.5px' }}>
+        Most<span style={{ color: C.blue }}>To</span>
+      </div>
+      <motion.button
+        whileHover={{ scale: 1.04 }}
+        whileTap={{ scale: 0.97 }}
+        style={{
+          position: 'relative', padding: '8px 16px', borderRadius: 999, border: 'none',
+          background: C.blue, color: '#fff',
+          fontSize: 12, fontWeight: 800, fontFamily: FONT, cursor: 'pointer',
+          boxShadow: '0 4px 14px rgba(74,143,255,.35)',
+        }}
+      >시작하기</motion.button>
+    </motion.nav>
+  );
+}
+
+function Hero() {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
+  const glowY = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  return (
+    <section ref={ref} style={{
+      minHeight: '100vh', position: 'relative', padding: '120px 24px 60px',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      <motion.div
+        animate={{ opacity: [0.4, 0.7, 0.4] }}
+        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          position: 'absolute', top: '10%', right: '-10%', width: 600, height: 600,
+          borderRadius: '50%', background: C.blue, filter: 'blur(140px)',
+          y: glowY, pointerEvents: 'none',
+        }}
+      />
+      <div style={{
+        position: 'absolute', bottom: '-10%', left: '-10%', width: 500, height: 500,
+        borderRadius: '50%', background: C.purple, opacity: 0.12, filter: 'blur(120px)',
+        pointerEvents: 'none',
+      }}/>
+      <motion.div style={{ opacity: heroOpacity, maxWidth: 1200, width: '100%', position: 'relative', zIndex: 1 }}>
+        <div className="hero-grid" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 60 }}>
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            animate="visible"
+            className="hero-text"
+            style={{ textAlign: 'center' }}
+          >
+            <motion.div variants={fadeUp} style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              padding: '6px 14px', borderRadius: 999,
+              background: 'rgba(74,143,255,0.12)', border: '1px solid rgba(74,143,255,0.3)',
+              marginBottom: 24,
+            }}>
+              <Sparkles size={12} color={C.blue}/>
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '1px', color: C.blue }}>
+                AI POSE DETECTION × RPG
+              </span>
+            </motion.div>
+            <motion.h1 variants={fadeUp} style={{
+              fontSize: 'clamp(40px, 8vw, 72px)',
+              fontWeight: 900, letterSpacing: '-2.5px', lineHeight: 1.05,
+              margin: 0, marginBottom: 20,
+            }}>
+              Most<span style={{ color: C.blue }}>To</span>
+            </motion.h1>
+            <motion.p variants={fadeUp} style={{
+              fontSize: 'clamp(18px, 3vw, 24px)',
+              fontWeight: 700, letterSpacing: '-0.3px', lineHeight: 1.3,
+              color: C.text, margin: 0, marginBottom: 16,
+            }}>운동할수록<br/>강해지는 캐릭터.</motion.p>
+            <motion.p variants={fadeUp} style={{
+              fontSize: 15, color: C.sub, lineHeight: 1.7,
+              margin: 0, marginBottom: 36, maxWidth: 460,
+              marginLeft: 'auto', marginRight: 'auto',
+            }}>
+              AI가 자세를 분석해 정확한 reps만 카운트하고,
+              레벨업으로 뱃지·아이템·티어를 잠금 해제하는
+              운동 RPG 앱.
+            </motion.p>
+            <motion.div variants={fadeUp} style={{
+              display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap',
+            }}>
+              <DownloadBtn icon={<Apple size={18}/>} label="App Store"/>
+              <DownloadBtn icon={<Play size={18}/>} label="Google Play"/>
+            </motion.div>
+            <motion.div variants={fadeUp} style={{
+              marginTop: 32, display: 'flex', alignItems: 'center', gap: 16,
+              justifyContent: 'center', flexWrap: 'wrap',
+            }}>
+              <Stars/>
+              <div style={{ fontSize: 12, color: C.subDim, fontWeight: 600 }}>
+                <strong style={{ color: C.text }}>4.9</strong> · 12,400+ 리뷰
+              </div>
+            </motion.div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.9, ease: EASE, delay: 0.3 }}
+            style={{ display: 'flex', justifyContent: 'center' }}
+          >
+            <PhoneMockup/>
+          </motion.div>
+        </div>
+      </motion.div>
+    </section>
+  );
+}
+
+function DownloadBtn({ icon, label }) {
+  return (
+    <motion.button
+      whileHover={{ scale: 1.05, y: -2 }}
+      whileTap={{ scale: 0.96 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+      style={{
+        display: 'flex', alignItems: 'center', gap: 10,
+        padding: '12px 22px', borderRadius: 12,
+        background: C.text, color: '#000', border: 'none', cursor: 'pointer',
+        fontFamily: FONT, fontSize: 14, fontWeight: 800,
+      }}
+    >
+      {icon}
+      <div style={{ textAlign: 'left', lineHeight: 1.1 }}>
+        <div style={{ fontSize: 9, fontWeight: 600, opacity: 0.6 }}>Download on</div>
+        <div>{label}</div>
+      </div>
+    </motion.button>
+  );
+}
+
+function Stars() {
+  return (
+    <motion.div
+      variants={staggerSlow}
+      initial="hidden"
+      animate="visible"
+      style={{ display: 'flex', gap: 2 }}
+    >
+      {[0,1,2,3,4].map(i => (
+        <motion.svg
+          key={i}
+          variants={{
+            hidden: { opacity: 0, scale: 0 },
+            visible: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 300 } },
+          }}
+          viewBox="0 0 24 24" width="14" height="14" fill={C.gold}
+        >
+          <path d="M12 2 L15 9 L22 9 L17 14 L19 22 L12 18 L5 22 L7 14 L2 9 L9 9 Z"/>
+        </motion.svg>
+      ))}
+    </motion.div>
+  );
+}
+
+function PhoneMockup() {
+  return (
+    <motion.div
+      animate={{ y: [0, -10, 0] }}
+      transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+      style={{ position: 'relative', width: 280, height: 580 }}
+    >
+      <div style={{
+        position: 'absolute', inset: 0, borderRadius: 42,
+        background: 'linear-gradient(160deg,#2a2a30,#0a0a0d)',
+        padding: 10, boxShadow: '0 30px 80px rgba(74,143,255,0.25), 0 10px 30px rgba(0,0,0,0.5)',
+      }}>
+        <div style={{
+          width: '100%', height: '100%', borderRadius: 32,
+          background: C.bgAlt, overflow: 'hidden', position: 'relative',
+        }}>
+          <div style={{
+            position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)',
+            width: 90, height: 22, borderRadius: 16, background: '#000', zIndex: 10,
+          }}/>
+          <div style={{ padding: '38px 14px 14px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px 12px' }}>
+              <div style={{ fontSize: 16, fontWeight: 900 }}>
+                Most<span style={{ color: C.blue }}>To</span>
+              </div>
+              <motion.div
+                animate={{ opacity: [1, 0.5, 1] }}
+                transition={{ duration: 1.6, repeat: Infinity }}
+                style={{
+                  fontSize: 9, fontWeight: 700, padding: '3px 8px', borderRadius: 999,
+                  background: 'rgba(34,197,94,0.15)', color: C.green,
+                  border: '1px solid rgba(34,197,94,0.3)',
+                }}
+              >● LIVE</motion.div>
+            </div>
+            <div style={{
+              background: C.card, borderRadius: 14, padding: '12px 14px',
+              border: `1px solid ${C.border}`, marginBottom: 10,
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{
+                    width: 34, height: 34, borderRadius: '50%',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 12, fontWeight: 900,
+                    background: `linear-gradient(135deg,${C.blue2},${C.blue})`,
+                    boxShadow: '0 0 12px rgba(74,143,255,.45)',
+                  }}>12</div>
+                  <div>
+                    <div style={{ fontSize: 8, fontWeight: 700, color: C.subDim, letterSpacing: '0.5px' }}>LV</div>
+                    <div style={{ fontSize: 11, fontWeight: 800 }}>Beginner</div>
+                  </div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: 14, fontWeight: 900 }}>340 <span style={{ fontSize: 8, color: C.subDim }}>EXP</span></div>
+                </div>
+              </div>
+              <div style={{ height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.08)', overflow: 'hidden' }}>
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: '85%' }}
+                  transition={{ duration: 1.2, delay: 1, ease: EASE }}
+                  style={{
+                    height: '100%',
+                    background: `linear-gradient(90deg,${C.blue2},${C.blue})`,
+                    boxShadow: '0 0 6px rgba(74,143,255,.5)',
+                  }}
+                />
+              </div>
+            </div>
+            <div style={{
+              borderRadius: 14, overflow: 'hidden', aspectRatio: '4/3',
+              background: 'linear-gradient(180deg,#0a0a0d,#1a1a22)',
+              border: `1px solid ${C.border}`, position: 'relative', marginBottom: 10,
+            }}>
+              {[
+                { top: 6, left: 6, bw: '1.5px 0 0 1.5px' },
+                { top: 6, right: 6, bw: '1.5px 1.5px 0 0' },
+                { bottom: 6, left: 6, bw: '0 0 1.5px 1.5px' },
+                { bottom: 6, right: 6, bw: '0 1.5px 1.5px 0' },
+              ].map((c, i) => (
+                <div key={i} style={{ position: 'absolute', width: 14, height: 14,
+                  ...c, borderColor: C.blue, borderStyle: 'solid', borderWidth: c.bw }}/>
+              ))}
+              <div style={{
+                position: 'absolute', top: 8, left: 8, zIndex: 5,
+                fontSize: 8, fontWeight: 700, padding: '2px 6px', borderRadius: 999,
+                background: 'rgba(0,0,0,0.5)', color: '#fff',
+              }}>SQUAT</div>
+              <svg viewBox="0 0 200 150" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+                <g stroke={C.blue} strokeWidth="1.6" fill="none" strokeLinecap="round" opacity="0.9">
+                  <circle cx="100" cy="30" r="8" fill="rgba(74,143,255,0.15)"/>
+                  <line x1="100" y1="39" x2="100" y2="82"/>
+                  <line x1="88" y1="50" x2="112" y2="50"/>
+                  <line x1="88" y1="50" x2="86" y2="72"/>
+                  <line x1="86" y1="72" x2="87" y2="94"/>
+                  <line x1="112" y1="50" x2="114" y2="72"/>
+                  <line x1="114" y1="72" x2="113" y2="94"/>
+                  <line x1="93" y1="82" x2="107" y2="82"/>
+                  <line x1="93" y1="82" x2="94" y2="108"/>
+                  <line x1="94" y1="108" x2="95" y2="132"/>
+                  <line x1="107" y1="82" x2="106" y2="108"/>
+                  <line x1="106" y1="108" x2="105" y2="132"/>
+                </g>
+                {[[100,39],[88,50],[112,50],[100,82],[86,72],[87,94],[114,72],[113,94],[94,108],[95,132],[106,108],[105,132]].map(([x,y],i) => (
+                  <motion.circle
+                    key={i}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 1 + i * 0.05, type: 'spring', stiffness: 400 }}
+                    cx={x} cy={y} r="2" fill={C.blue} stroke="#fff" strokeWidth="0.8"
+                  />
+                ))}
+              </svg>
+              <div style={{
+                position: 'absolute', bottom: 8, left: 8, right: 8,
+                display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end',
+              }}>
+                <div>
+                  <div style={{ fontSize: 7, fontWeight: 700, color: C.subDim, letterSpacing: '0.5px' }}>REPS</div>
+                  <CountUpInline to={12} delay={1.5} fontSize={22} color={C.blue}/>
+                </div>
+              </div>
+            </div>
+            <div style={{
+              background: C.card, borderRadius: 12, padding: '10px 12px',
+              border: `1px solid ${C.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Flame size={12} color={C.orange}/>
+                <span style={{ fontSize: 10, fontWeight: 700, color: C.subDim, letterSpacing: '0.5px' }}>COMBO</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontSize: 18, fontWeight: 900, color: C.orange, letterSpacing: '-0.5px' }}>×24</span>
+                <motion.span
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 1.8, repeat: Infinity }}
+                  style={{
+                    fontSize: 9, fontWeight: 800, color: C.orange,
+                    padding: '2px 6px', borderRadius: 999,
+                    background: 'rgba(249,115,22,0.15)',
+                  }}
+                >+50</motion.span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function CountUpInline({ to, delay = 0, fontSize = 22, color = C.blue }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
+  const [val, setVal] = React.useState(0);
+  React.useEffect(() => {
+    if (!inView) return;
+    const timer = setTimeout(() => {
+      const duration = 1200;
+      const startTime = performance.now();
+      const tick = (now) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        setVal(Math.round(to * (1 - Math.pow(1 - progress, 3))));
+        if (progress < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }, delay * 1000);
+    return () => clearTimeout(timer);
+  }, [inView, to, delay]);
+  return (
+    <span ref={ref} style={{ fontSize, fontWeight: 900, color, lineHeight: 1, letterSpacing: '-0.8px' }}>
+      {val}
+    </span>
+  );
+}
+
+function AIDetectionSection() {
+  return (
+    <SectionWrap id="features">
+      <motion.div initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}>
+        <motion.div variants={fadeUp}><SectionEyebrow>AI POSE DETECTION</SectionEyebrow></motion.div>
+        <motion.div variants={fadeUp}>
+          <SectionTitle>카메라 한 대로<br/><span style={{ color: C.blue }}>자세를 읽어냅니다</span></SectionTitle>
+        </motion.div>
+        <motion.div variants={fadeUp}>
+          <SectionLead>MediaPipe 기반 실시간 관절 트래킹으로 스쿼트·런지·푸시업·파이크·풀업의 정확한 동작만 카운트합니다.</SectionLead>
+        </motion.div>
+      </motion.div>
+      <motion.div
+        initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+        style={{
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))',
+          gap: 12, marginTop: 50, maxWidth: 900, marginLeft: 'auto', marginRight: 'auto',
+        }}
+      >
+        {[
+          { name: '스쿼트', angle: '정면', color: C.blue },
+          { name: '런지', angle: '정면', color: C.blue },
+          { name: '풀업', angle: '정면', color: C.blue },
+          { name: '푸시업', angle: '측면', color: C.purple },
+          { name: '파이크', angle: '측면', color: C.purple },
+        ].map((ex, i) => (
+          <motion.div
+            key={i}
+            variants={fadeUpFast}
+            whileHover={{ y: -6, scale: 1.03 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            style={{
+              background: C.card, borderRadius: 16, padding: '20px 16px',
+              border: `1px solid ${C.border}`, textAlign: 'center', cursor: 'default',
+            }}
+          >
+            <div style={{
+              width: 44, height: 44, borderRadius: 12,
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              background: ex.color + '22', marginBottom: 10,
+            }}>
+              <Activity size={20} color={ex.color}/>
+            </div>
+            <div style={{ fontSize: 15, fontWeight: 900, marginBottom: 4 }}>{ex.name}</div>
+            <div style={{
+              fontSize: 10, fontWeight: 700, letterSpacing: '1px',
+              color: ex.color, padding: '3px 8px', borderRadius: 999,
+              background: ex.color + '15', display: 'inline-block',
+            }}>{ex.angle.toUpperCase()}</div>
+          </motion.div>
+        ))}
+      </motion.div>
+    </SectionWrap>
+  );
+}
+
+function CameraGuideSection() {
+  return (
+    <SectionWrap dim>
+      <motion.div initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}>
+        <motion.div variants={fadeUp}><SectionEyebrow>CAMERA SETUP</SectionEyebrow></motion.div>
+        <motion.div variants={fadeUp}>
+          <SectionTitle>정면이냐, <span style={{ color: C.purple }}>측면</span>이냐</SectionTitle>
+        </motion.div>
+        <motion.div variants={fadeUp}>
+          <SectionLead>종목에 따라 카메라 각도가 다릅니다. 앱이 매번 알려드리니 신경 쓰지 않으셔도 돼요.</SectionLead>
+        </motion.div>
+      </motion.div>
+      <motion.div
+        initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+        style={{
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))',
+          gap: 16, marginTop: 50, maxWidth: 800, marginLeft: 'auto', marginRight: 'auto',
+        }}
+      >
+        <motion.div variants={fadeUp}>
+          <AngleCard label="정면 촬영" color={C.blue} exercises={['스쿼트', '런지', '풀업']} diagram="front" description="좌우 대칭이 보이도록"/>
+        </motion.div>
+        <motion.div variants={fadeUp}>
+          <AngleCard label="측면 촬영" color={C.purple} exercises={['푸시업', '파이크']} diagram="side" description="몸의 라인이 보이도록"/>
+        </motion.div>
+      </motion.div>
+    </SectionWrap>
+  );
+}
+
+function AngleCard({ label, color, exercises, diagram, description }) {
+  return (
+    <motion.div
+      whileHover={{ y: -4 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+      style={{
+        background: C.card, borderRadius: 20, padding: 24, border: `1px solid ${C.border}`,
+      }}
+    >
+      <div style={{
+        aspectRatio: '4/3', borderRadius: 12, overflow: 'hidden',
+        background: 'rgba(0,0,0,0.3)', border: `1px solid ${C.border}`,
+        marginBottom: 16, padding: 12,
+      }}>
+        <svg viewBox="0 0 200 140" width="100%" height="100%">
+          {diagram === 'front' ? (
+            <>
+              <rect x="18" y="42" width="32" height="56" rx="5" fill="none" stroke={color} strokeWidth="2.2"/>
+              <rect x="22" y="48" width="24" height="38" rx="2" fill={color} opacity="0.15"/>
+              <circle cx="34" cy="55" r="2.5" fill={color}/>
+              <motion.path
+                initial={{ pathLength: 0, opacity: 0 }}
+                whileInView={{ pathLength: 1, opacity: 0.45 }}
+                viewport={viewport}
+                transition={{ duration: 1, delay: 0.3 }}
+                d="M50 60 L120 36 M50 80 L120 104"
+                stroke={color} strokeWidth="1.4" strokeDasharray="4 3" fill="none"
+              />
+              <g stroke="#fff" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="150" cy="32" r="11" fill="rgba(255,255,255,0.12)"/>
+                <line x1="150" y1="43" x2="150" y2="85"/>
+                <line x1="136" y1="52" x2="164" y2="52"/>
+                <line x1="136" y1="52" x2="132" y2="82"/>
+                <line x1="164" y1="52" x2="168" y2="82"/>
+                <line x1="142" y1="85" x2="158" y2="85"/>
+                <line x1="142" y1="85" x2="140" y2="122"/>
+                <line x1="158" y1="85" x2="160" y2="122"/>
+              </g>
+              <circle cx="150" cy="65" r="2" fill="#fff" opacity="0.5"/>
+            </>
+          ) : (
+            <>
+              <rect x="18" y="42" width="32" height="56" rx="5" fill="none" stroke={color} strokeWidth="2.2"/>
+              <rect x="22" y="48" width="24" height="38" rx="2" fill={color} opacity="0.15"/>
+              <circle cx="34" cy="55" r="2.5" fill={color}/>
+              <motion.path
+                initial={{ pathLength: 0, opacity: 0 }}
+                whileInView={{ pathLength: 1, opacity: 0.45 }}
+                viewport={viewport}
+                transition={{ duration: 1, delay: 0.3 }}
+                d="M50 60 L120 50 M50 80 L120 90"
+                stroke={color} strokeWidth="1.4" strokeDasharray="4 3" fill="none"
+              />
+              <g stroke="#fff" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="150" cy="32" r="11" fill="rgba(255,255,255,0.12)"/>
+                <line x1="150" y1="43" x2="150" y2="85"/>
+                <line x1="150" y1="54" x2="146" y2="84"/>
+                <line x1="150" y1="85" x2="146" y2="122"/>
+                <g opacity="0.3">
+                  <line x1="150" y1="54" x2="154" y2="84"/>
+                  <line x1="150" y1="85" x2="154" y2="122"/>
+                </g>
+              </g>
+              <circle cx="143" cy="31" r="2.2" fill="#fff"/>
+              <path d="M139 33 L141 35" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
+            </>
+          )}
+        </svg>
+      </div>
+      <div style={{
+        display: 'inline-block', fontSize: 10, fontWeight: 800, letterSpacing: '1.5px',
+        padding: '4px 10px', borderRadius: 999, marginBottom: 10,
+        color: color, background: color + '20', border: `1px solid ${color}55`,
+      }}>{label.toUpperCase()}</div>
+      <div style={{ fontSize: 18, fontWeight: 900, marginBottom: 6, letterSpacing: '-0.3px' }}>{description}</div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
+        {exercises.map((e, i) => (
+          <span key={i} style={{
+            fontSize: 12, fontWeight: 700, padding: '5px 12px', borderRadius: 999,
+            background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.75)',
+            border: `1px solid ${C.border}`,
+          }}>{e}</span>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+function RPGSection() {
+  return (
+    <SectionWrap>
+      <motion.div initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}>
+        <motion.div variants={fadeUp}><SectionEyebrow>EXP · LEVEL · COMBO</SectionEyebrow></motion.div>
+        <motion.div variants={fadeUp}>
+          <SectionTitle>매 reps가 <span style={{ color: C.orange }}>경험치</span>로,<br/>연속이 <span style={{ color: C.orange }}>콤보</span>로.</SectionTitle>
+        </motion.div>
+        <motion.div variants={fadeUp}>
+          <SectionLead>운동을 게임처럼. 콤보 10·20·30 달성 시 보너스 EXP가 터지고, 레벨업할 때마다 새 뱃지와 아이템이 잠금 해제됩니다.</SectionLead>
+        </motion.div>
+      </motion.div>
+      <motion.div
+        initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+        style={{
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))',
+          gap: 16, marginTop: 50, maxWidth: 1100, marginLeft: 'auto', marginRight: 'auto',
+        }}
+      >
+        <FeatureCard icon={Zap} color={C.blue} title="실시간 EXP" desc="reps마다 즉시 누적. 종목별로 보너스 배율이 달라요." stat="+12" statLabel="EXP/REP" />
+        <FeatureCard icon={Flame} color={C.orange} title="콤보 부스트" desc="10·20·30 연속 달성 시 보너스 EXP가 폭발해요." stat="×24" statLabel="CURRENT COMBO" />
+        <FeatureCard icon={Trophy} color={C.gold} title="뱃지 컬렉션" desc="레벨·종목·콤보·연속운동까지 60+ 뱃지." stat="34/60" statLabel="UNLOCKED" />
+        <FeatureCard icon={Award} color={C.purple} title="아이템 시스템" desc="EXP 부스트·콤보 강화 효과가 있는 17종 아이템." stat="17" statLabel="COLLECTIBLES" />
+      </motion.div>
+    </SectionWrap>
+  );
+}
+
+function FeatureCard({ icon: Icon, color, title, desc, stat, statLabel }) {
+  return (
+    <motion.div
+      variants={fadeUp}
+      whileHover={{ y: -6, scale: 1.02 }}
+      transition={{ type: 'spring', stiffness: 280, damping: 22 }}
+      style={{
+        background: C.card, borderRadius: 20, padding: 24,
+        border: `1px solid ${C.border}`, height: '100%',
+        position: 'relative', overflow: 'hidden',
+      }}
+    >
+      <div style={{
+        position: 'absolute', top: -30, right: -30, width: 120, height: 120,
+        borderRadius: '50%', background: color, opacity: 0.08, filter: 'blur(40px)',
+      }}/>
+      <div style={{ position: 'relative' }}>
+        <motion.div
+          whileHover={{ rotate: -8, scale: 1.1 }}
+          style={{
+            width: 48, height: 48, borderRadius: 14,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: color + '22', marginBottom: 18,
+          }}
+        >
+          <Icon size={22} color={color}/>
+        </motion.div>
+        <div style={{ fontSize: 17, fontWeight: 900, marginBottom: 8, letterSpacing: '-0.3px' }}>{title}</div>
+        <div style={{ fontSize: 13, color: C.sub, lineHeight: 1.6, marginBottom: 18 }}>{desc}</div>
+        <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 14 }}>
+          <div style={{ fontSize: 9, fontWeight: 700, color: C.subDim, letterSpacing: '1px', marginBottom: 2 }}>{statLabel}</div>
+          <div style={{ fontSize: 22, fontWeight: 900, color: color, letterSpacing: '-1px' }}>{stat}</div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+const TIERS = [
+  { name: 'Beginner',    range: '1-20',    grad: ['#4A8FFF', '#2563eb'], color: '#fff' },
+  { name: 'Novice',      range: '21-40',   grad: ['#38bdf8', '#0284c7'], color: '#7dd3fc' },
+  { name: 'Athlete',     range: '41-60',   grad: ['#34d399', '#059669'], color: '#6ee7b7' },
+  { name: 'Trainee',     range: '61-80',   grad: ['#fbbf24', '#d97706'], color: '#fcd34d' },
+  { name: 'Warrior',     range: '81-100',  grad: ['#fb923c', '#c2410c'], color: '#fdba74' },
+  { name: 'Champion',    range: '101-120', grad: ['#ef4444', '#b91c1c'], color: '#fca5a5' },
+  { name: 'Legend',      range: '121-140', grad: ['#c084fc', '#7e22ce'], color: '#d8b4fe' },
+  { name: 'Master',      range: '141-160', grad: ['#a855f7', '#6d28d9'], color: '#c4b5fd' },
+  { name: 'Elite',       range: '161-180', grad: ['#1e293b', '#0f172a'], color: '#fbbf24' },
+  { name: 'Mythic',      range: '181-200', grad: ['#6d28d9', '#1e1b4b'], color: '#a78bfa' },
+  { name: 'Titan',       range: '201-220', grad: ['#475569', '#0f172a'], color: '#7dd3fc' },
+  { name: 'Demigod',     range: '221-240', grad: ['#fff', '#e2e8f0'],    color: '#1e293b' },
+  { name: 'Ascendant',   range: '241-260', grad: ['#0f172a', '#020617'], color: '#67e8f9' },
+  { name: 'Transcendent',range: '261+',    grad: ['#1a1a1a', '#000'],    color: '#fff' },
+];
+
+const tierVariants = {
+  hidden: { opacity: 0, scale: 0.5, rotate: -10 },
+  visible: (i) => ({
+    opacity: 1, scale: 1, rotate: 0,
+    transition: { delay: i * 0.04, type: 'spring', stiffness: 220, damping: 18 },
+  }),
+};
+
+function TierShowcaseSection() {
+  return (
+    <SectionWrap id="tiers" dim>
+      <motion.div initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}>
+        <motion.div variants={fadeUp}><SectionEyebrow>14 TIERS</SectionEyebrow></motion.div>
+        <motion.div variants={fadeUp}>
+          <SectionTitle>
+            Beginner부터<br/>
+            <span style={{
+              background: 'linear-gradient(90deg,#4A8FFF,#a855f7,#fbbf24)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+            }}>Transcendent</span>까지
+          </SectionTitle>
+        </motion.div>
+        <motion.div variants={fadeUp}>
+          <SectionLead>20레벨마다 새 칭호. 후반 티어로 갈수록 배지가 화려해지고 색이 짙어집니다.</SectionLead>
+        </motion.div>
+      </motion.div>
+      <motion.div
+        initial="hidden" whileInView="visible" viewport={viewport}
+        style={{
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(140px,1fr))',
+          gap: 14, marginTop: 50, maxWidth: 1100, marginLeft: 'auto', marginRight: 'auto',
+        }}
+      >
+        {TIERS.map((tier, i) => (
+          <motion.div
+            key={i} custom={i} variants={tierVariants}
+            whileHover={{ y: -6, scale: 1.05 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 18 }}
+            style={{
+              background: C.card, borderRadius: 16, padding: '20px 12px',
+              border: `1px solid ${C.border}`, textAlign: 'center', cursor: 'default',
+            }}
+          >
+            <motion.div
+              animate={i === TIERS.length - 1 ? { scale: [1, 1.08, 1] } : {}}
+              transition={i === TIERS.length - 1 ? { duration: 2.4, repeat: Infinity, ease: 'easeInOut' } : {}}
+              style={{
+                width: 52, height: 52, borderRadius: '50%',
+                background: `linear-gradient(135deg,${tier.grad[0]},${tier.grad[1]})`,
+                margin: '0 auto 14px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 14, fontWeight: 900, color: tier.color,
+                boxShadow: i === TIERS.length - 1
+                  ? `0 0 24px ${tier.color}, inset 0 0 10px ${tier.color}66`
+                  : `0 0 18px ${tier.grad[0]}55, inset 0 0 6px rgba(255,255,255,.12)`,
+                border: i >= 7 ? `1.5px solid ${tier.color}55` : 'none',
+              }}
+            >
+              {i === TIERS.length - 1 ? '∞' : i + 1}
+            </motion.div>
+            <div style={{ fontSize: 13, fontWeight: 900, letterSpacing: '-0.3px', color: tier.color, marginBottom: 4 }}>
+              {tier.name}
+            </div>
+            <div style={{ fontSize: 10, color: C.subDim, fontWeight: 700, letterSpacing: '0.5px' }}>
+              LV {tier.range}
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+    </SectionWrap>
+  );
+}
+
+function SocialSection() {
+  return (
+    <SectionWrap>
+      <motion.div initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}>
+        <motion.div variants={fadeUp}><SectionEyebrow>COMPETE & GROW</SectionEyebrow></motion.div>
+        <motion.div variants={fadeUp}>
+          <SectionTitle>혼자 안 가요.<br/><span style={{ color: C.cyan }}>친구</span>와 함께 갑니다.</SectionTitle>
+        </motion.div>
+        <motion.div variants={fadeUp}>
+          <SectionLead>전체 랭킹, 일일 미션, 친구와의 대결까지. 매일 갱신되는 도전이 다음 운동을 끌어냅니다.</SectionLead>
+        </motion.div>
+      </motion.div>
+      <motion.div
+        initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+        style={{
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))',
+          gap: 16, marginTop: 50, maxWidth: 1000, marginLeft: 'auto', marginRight: 'auto',
+        }}
+      >
+        <motion.div variants={fadeUp}><RankPreview/></motion.div>
+        <motion.div variants={fadeUp}><MissionPreview/></motion.div>
+      </motion.div>
+    </SectionWrap>
+  );
+}
+
+function RankPreview() {
+  const ranks = [
+    { pos: 1, name: '철벽승우', exp: '12,480', medal: C.gold, isYou: false },
+    { pos: 2, name: '나 (you)', exp: '11,920', medal: C.silver, isYou: true },
+    { pos: 3, name: '강하늘', exp: '9,800', medal: C.bronze, isYou: false },
+    { pos: 4, name: '근육맨', exp: '8,420', medal: null, isYou: false },
+  ];
+  return (
+    <div style={{ background: C.card, borderRadius: 20, padding: 20, border: `1px solid ${C.border}` }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+        <BarChart3 size={16} color={C.blue}/>
+        <div style={{ fontSize: 13, fontWeight: 900, letterSpacing: '0.5px' }}>전체 랭킹</div>
+      </div>
+      <motion.div
+        initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+        style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+      >
+        {ranks.map(r => (
+          <motion.div
+            key={r.pos}
+            variants={{ hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0 } }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 10,
+              padding: '10px 12px', borderRadius: 12,
+              background: r.isYou ? 'rgba(74,143,255,0.08)' : 'rgba(255,255,255,0.02)',
+              border: `1px solid ${r.isYou ? 'rgba(74,143,255,0.35)' : 'rgba(255,255,255,0.04)'}`,
+            }}
+          >
+            <div style={{
+              width: 24, height: 24, borderRadius: '50%',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 11, fontWeight: 900,
+              background: r.medal || 'rgba(255,255,255,0.06)',
+              color: r.medal ? '#0d0d0d' : C.sub,
+            }}>{r.pos}</div>
+            <div style={{ flex: 1, fontSize: 13, fontWeight: 800 }}>{r.name}</div>
+            <div style={{ fontSize: 13, fontWeight: 900, color: C.blue }}>{r.exp}</div>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
+function MissionPreview() {
+  const missions = [
+    { name: '스쿼트 50개', progress: 100, exp: 500, done: true, color: C.green },
+    { name: '3종목 운동하기', progress: 66, exp: 150, done: false, color: C.purple },
+    { name: '콤보 30 달성', progress: 80, exp: 300, done: false, color: C.orange },
+  ];
+  return (
+    <div style={{ background: C.card, borderRadius: 20, padding: 20, border: `1px solid ${C.border}` }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+        <Target size={16} color={C.purple}/>
+        <div style={{ fontSize: 13, fontWeight: 900, letterSpacing: '0.5px' }}>오늘의 미션</div>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        {missions.map((m, i) => (
+          <div key={i}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                {m.done && <Check size={14} color={C.green} strokeWidth={3}/>}
+                <div style={{ fontSize: 13, fontWeight: 700, color: m.done ? C.subDim : C.text, textDecoration: m.done ? 'line-through' : 'none' }}>{m.name}</div>
+              </div>
+              <div style={{ fontSize: 12, fontWeight: 900, color: m.color }}>+{m.exp}</div>
+            </div>
+            <div style={{ height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+              <motion.div
+                initial={{ width: 0 }}
+                whileInView={{ width: `${m.progress}%` }}
+                viewport={viewport}
+                transition={{ duration: 1.2, delay: 0.2 + i * 0.15, ease: EASE }}
+                style={{ height: '100%', background: m.color }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StatsSection() {
+  const stats = [
+    { num: 50000, suffix: 'K+', divisor: 1000, label: '운동인이 함께해요' },
+    { num: 1.2, suffix: 'M', divisor: 1, label: '하루 reps 카운트', decimal: 1 },
+    { num: 14, suffix: '', divisor: 1, label: '레벨 티어' },
+    { num: 60, suffix: '+', divisor: 1, label: '뱃지 컬렉션' },
+  ];
+  return (
+    <SectionWrap dim>
+      <motion.div
+        initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+        style={{
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))',
+          gap: 24, maxWidth: 1100, marginLeft: 'auto', marginRight: 'auto',
+        }}
+      >
+        {stats.map((s, i) => (
+          <motion.div key={i} variants={fadeUp} style={{ textAlign: 'center' }}>
+            <CountUpStat target={s.num} suffix={s.suffix} divisor={s.divisor} decimal={s.decimal}/>
+            <div style={{ fontSize: 13, color: C.sub, fontWeight: 600 }}>{s.label}</div>
+          </motion.div>
+        ))}
+      </motion.div>
+    </SectionWrap>
+  );
+}
+
+function CountUpStat({ target, suffix = '', divisor = 1, decimal = 0 }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-50px' });
+  const [val, setVal] = React.useState(0);
+  React.useEffect(() => {
+    if (!inView) return;
+    const duration = 1800;
+    const startTime = performance.now();
+    const tick = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setVal(target * eased);
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [inView, target]);
+  const display = decimal > 0
+    ? (val / divisor).toFixed(decimal)
+    : Math.round(val / divisor).toLocaleString();
+  return (
+    <div ref={ref} style={{
+      fontSize: 'clamp(36px, 6vw, 56px)',
+      fontWeight: 900, letterSpacing: '-2px',
+      background: 'linear-gradient(135deg,#fff,rgba(255,255,255,0.5))',
+      WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+      marginBottom: 6,
+    }}>{display}{suffix}</div>
+  );
+}
+
+function FinalCTA() {
+  return (
+    <section style={{ padding: '100px 24px', position: 'relative', overflow: 'hidden' }}>
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        background: 'radial-gradient(circle at 50% 50%, rgba(74,143,255,0.18) 0%, transparent 60%)',
+      }}/>
+      <motion.div
+        initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+        style={{ textAlign: 'center', position: 'relative', zIndex: 1, maxWidth: 700, margin: '0 auto' }}
+      >
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, scale: 0.5 },
+            visible: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 200, damping: 18 } },
+          }}
+          whileHover={{ rotate: [-8, 8, -8, 0], scale: 1.08 }}
+          transition={{ duration: 0.6 }}
+          style={{
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            width: 80, height: 80, borderRadius: '50%', marginBottom: 28,
+            background: `linear-gradient(135deg,${C.blue2},${C.blue})`,
+            boxShadow: '0 0 50px rgba(74,143,255,0.5)', cursor: 'default',
+          }}
+        >
+          <Flame size={36} color="#fff" strokeWidth={2.2}/>
+        </motion.div>
+        <motion.h2 variants={fadeUp} style={{
+          fontSize: 'clamp(36px, 6vw, 56px)',
+          fontWeight: 900, letterSpacing: '-2px', lineHeight: 1.1,
+          margin: 0, marginBottom: 16,
+        }}>
+          오늘부터<br/><span style={{ color: C.blue }}>강해질 시간</span>
+        </motion.h2>
+        <motion.p variants={fadeUp} style={{
+          fontSize: 16, color: C.sub, lineHeight: 1.6, marginBottom: 32,
+        }}>지금 다운로드. 첫 운동에 100 EXP가 자동 지급돼요.</motion.p>
+        <motion.div variants={fadeUp} style={{
+          display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap',
+        }}>
+          <DownloadBtn icon={<Apple size={18}/>} label="App Store"/>
+          <DownloadBtn icon={<Play size={18}/>} label="Google Play"/>
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer style={{
+      borderTop: `1px solid ${C.border}`, padding: '40px 24px 30px', background: C.bgAlt,
+    }}>
+      <div style={{
+        maxWidth: 1100, margin: '0 auto',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        flexWrap: 'wrap', gap: 20,
+      }}>
+        <div>
+          <div style={{ fontSize: 18, fontWeight: 900, letterSpacing: '-0.5px', marginBottom: 6 }}>
+            Most<span style={{ color: C.blue }}>To</span>
+          </div>
+          <div style={{ fontSize: 11, color: C.subDim, fontWeight: 600, letterSpacing: '0.5px' }}>
+            MORE STRONGER TOMORROW
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 16 }}>
+          {[Twitter, Instagram, Github].map((Icon, i) => (
+            <motion.a
+              key={i} href="#"
+              whileHover={{ y: -3, scale: 1.08 }}
+              transition={{ type: 'spring', stiffness: 300 }}
+              style={{
+                width: 36, height: 36, borderRadius: 10,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: C.card, border: `1px solid ${C.border}`, color: C.sub,
+              }}
+            >
+              <Icon size={16}/>
+            </motion.a>
+          ))}
+        </div>
+      </div>
+      <div style={{
+        maxWidth: 1100, margin: '24px auto 0', paddingTop: 20,
+        borderTop: `1px solid ${C.border}`,
+        fontSize: 11, color: C.subDim, textAlign: 'center',
+      }}>© 2025 MostTo · All rights reserved</div>
+    </footer>
+  );
+}
+
+function SectionWrap({ children, id, dim }) {
+  return (
+    <section id={id} style={{
+      padding: '100px 24px', background: dim ? C.bgAlt : C.bg, position: 'relative',
+    }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>{children}</div>
+    </section>
+  );
+}
+
+function SectionEyebrow({ children }) {
+  return (
+    <div style={{
+      fontSize: 11, fontWeight: 800, letterSpacing: '2px',
+      color: C.blue, textAlign: 'center', marginBottom: 14,
+    }}>{children}</div>
+  );
+}
+
+function SectionTitle({ children }) {
+  return (
+    <h2 style={{
+      fontSize: 'clamp(32px, 5.5vw, 52px)',
+      fontWeight: 900, letterSpacing: '-2px', lineHeight: 1.1,
+      textAlign: 'center', margin: 0, marginBottom: 18,
+    }}>{children}</h2>
+  );
+}
+
+function SectionLead({ children }) {
+  return (
+    <p style={{
+      fontSize: 16, color: C.sub, lineHeight: 1.7,
+      textAlign: 'center', maxWidth: 580, margin: '0 auto',
+    }}>{children}</p>
+  );
+}
+
+createRoot(document.getElementById('root')).render(<MosstoLanding />);
+</script>
+</body>
+</html>
